@@ -6,7 +6,7 @@ import numpy as np
 import copy
 from gias2.musculoskeletal.bonemodels import bonemodels
 from gias2.musculoskeletal import osim
-import muscleVolumeCalculator
+from mapclientplugins.gait2392somsomusclestep.muscleVolumeCalculator import muscleVolumeCalculator
 import re
 import math
 import json
@@ -15,7 +15,8 @@ from scipy.interpolate import interp1d
 
 SELF_DIR = os.path.split(__file__)[0]
 DATA_DIR = os.path.join(SELF_DIR, 'data/node_numbers/')
-TEMPLATE_OSIM_PATH = os.path.join(SELF_DIR, 'data', 'gait2392_simbody_wrap.osim')
+TEMPLATE_OSIM_PATH = os.path.join(SELF_DIR, 'data',
+                                  'gait2392_simbody_wrap.osim')
 
 VALID_SEGS = {'pelvis', 'femur-l', 'femur-r', 'tibia-l', 'tibia-r'}
 OSIM_FILENAME = 'gait2392_simbody.osim'
@@ -92,13 +93,13 @@ def update_tibiafibula_opensim_acs(tibiafibula_model):
     )
 
 
-def splitTibiaFibulaGFs(tibfibGField):
-    tib = tibfibGField.makeGFFromElements(
+def split_tibia_fibula_gfs(tib_fib_gf):
+    tib = tib_fib_gf.makeGFFromElements(
         'tibia',
         TIBFIB_SUBMESH_ELEMS['tibia'],
         TIBFIB_BASISTYPES,
     )
-    fib = tibfibGField.makeGFFromElements(
+    fib = tib_fib_gf.makeGFFromElements(
         'fibula',
         TIBFIB_SUBMESH_ELEMS['fibula'],
         TIBFIB_BASISTYPES,
@@ -107,7 +108,7 @@ def splitTibiaFibulaGFs(tibfibGField):
     return tib, fib
 
 
-def localOsim2Global(body, model):
+def local_osim_2_global(body, model):
     # find the knee angle
     knee = model.joints['knee_l']
     kneeAngle = model.joints['knee_l'].coordSets['knee_angle_l'].defaultValue
@@ -142,6 +143,7 @@ def localOsim2Global(body, model):
     f2 = interp1d(trans2X, trans2Y, kind='cubic')
     knee_rTrans[1] = f2(kneeAngle)
 
+    trans = None
     if body == 'pelvis':
         trans = np.zeros(3)
     elif body == 'femur_l':
@@ -188,7 +190,7 @@ def localOsim2Global(body, model):
     return trans
 
 
-class gait2392MuscleCustomiser(object):
+class Gait2392MuscleCustomiser(object):
 
     def __init__(self, config, ll=None, osimmodel=None, landmarks=None):
         """
@@ -233,14 +235,17 @@ class gait2392MuscleCustomiser(object):
         with open(DATA_DIR + 'pelvisNodeNumbers.txt') as infile:
             pelvisData = json.load(infile)
 
-        pelvisAttachmentNodeNums = pelvisData.values()
-        pelvisMuscleNames = pelvisData.keys()
+        pelvisAttachmentNodeNums = list(pelvisData.values())
+        pelvisMuscleNames = list(pelvisData.keys())
         pelvisMuscleNames = [str(item) for item in pelvisMuscleNames]
 
+        # This method appears to be taking quite a while to complete (like 5
+        # minutes), is this expected? This wasn't being used in musclecusthfm.
         # the muscle attachments were selected an a 24x24 mesh
         pelvisPoints, lhF = pelvis.gf.triangulate([24, 24])
 
-        # align the discretised pelvis points and the muscle attachments to the opensims pelvis local coordinate system
+        # Align the discretised pelvis points and the muscle attachments to the
+        # opensims pelvis local coordinate system.
         localPelvisPoints = pelvis.acs.map_local(pelvisPoints) / 1000
         pelvisAttachments = localPelvisPoints[pelvisAttachmentNodeNums]
 
@@ -267,8 +272,8 @@ class gait2392MuscleCustomiser(object):
         with open(DATA_DIR + 'leftFemurNodeNumbers.txt') as infile:
             leftFemurData = json.load(infile)
 
-        leftFemurAttachmentNodeNums = leftFemurData.values()
-        leftFemurMuscleNames = leftFemurData.keys()
+        leftFemurAttachmentNodeNums = list(leftFemurData.values())
+        leftFemurMuscleNames = list(leftFemurData.keys())
         leftFemurMuscleNames = [str(item) for item in leftFemurMuscleNames]
 
         # update the geometric field coordinate system to match opensims
@@ -304,8 +309,8 @@ class gait2392MuscleCustomiser(object):
         with open(DATA_DIR + 'rightFemurNodeNumbers.txt') as infile:
             rightFemurData = json.load(infile)
 
-        rightFemurAttachmentNodeNums = rightFemurData.values()
-        rightFemurMuscleNames = rightFemurData.keys()
+        rightFemurAttachmentNodeNums = list(rightFemurData.values())
+        rightFemurMuscleNames = list(rightFemurData.keys())
         rightFemurMuscleNames = [str(item) for item in rightFemurMuscleNames]
 
         # update the geometric field coordinate system to match opensims
@@ -332,14 +337,14 @@ class gait2392MuscleCustomiser(object):
             ppR.location = rightFemurAttachments[i]
 
     def cust_tibia_l(self):
-
-        # the tibia, patella and fibula all use the same fieldwork model to align with opensim
+        # The tibia, patella and fibula all use the same fieldwork model to
+        # align with opensim
 
         leftTibFib = self.ll.models['tibiafibula-l']
         leftPatella = self.ll.models['patella-l']
         update_tibiafibula_opensim_acs(leftTibFib)
 
-        leftTib, leftFib = splitTibiaFibulaGFs(leftTibFib.gf)
+        leftTib, leftFib = split_tibia_fibula_gfs(leftTibFib.gf)
 
         leftTibia = bonemodels.TibiaFibulaModel('tibia', leftTibFib.gf)
 
@@ -347,24 +352,24 @@ class gait2392MuscleCustomiser(object):
         with open(DATA_DIR + 'leftTibiaNodeNumbers.txt') as infile:
             leftTibiaData = json.load(infile)
 
-        leftTibiaAttachmentNodeNums = leftTibiaData.values()
-        leftTibiaMuscleNames = leftTibiaData.keys()
+        leftTibiaAttachmentNodeNums = list(leftTibiaData.values())
+        leftTibiaMuscleNames = list(leftTibiaData.keys())
         leftTibiaMuscleNames = [str(item) for item in leftTibiaMuscleNames]
 
         # load in the fibula muscle attachment node numbers
         with open(DATA_DIR + 'leftFibulaNodeNumbers.txt') as infile:
             leftFibulaData = json.load(infile)
 
-        leftFibulaAttachmentNodeNums = leftFibulaData.values()
-        leftFibulaMuscleNames = leftFibulaData.keys()
+        leftFibulaAttachmentNodeNums = list(leftFibulaData.values())
+        leftFibulaMuscleNames = list(leftFibulaData.keys())
         leftFibulaMuscleNames = [str(item) for item in leftFibulaMuscleNames]
 
         # load in the patella muscle attachment node numbers
         with open(DATA_DIR + 'leftPatellaNodeNumbers.txt') as infile:
             leftPatellaData = json.load(infile)
 
-        leftPatellaAttachmentNodeNums = leftPatellaData.values()
-        leftPatellaMuscleNames = leftPatellaData.keys()
+        leftPatellaAttachmentNodeNums = list(leftPatellaData.values())
+        leftPatellaMuscleNames = list(leftPatellaData.keys())
         leftPatellaMuscleNames = [str(item) for item in leftPatellaMuscleNames]
 
         leftTibiaPoints, lhF = leftTib.triangulate([24, 24])
@@ -431,7 +436,7 @@ class gait2392MuscleCustomiser(object):
         rightPatella = self.ll.models['patella-r']
         update_tibiafibula_opensim_acs(rightTibFib)
 
-        rightTib, rightFib = splitTibiaFibulaGFs(rightTibFib.gf)
+        rightTib, rightFib = split_tibia_fibula_gfs(rightTibFib.gf)
 
         rightTibia = bonemodels.TibiaFibulaModel('tibia', rightTibFib.gf)
 
@@ -439,24 +444,24 @@ class gait2392MuscleCustomiser(object):
         with open(DATA_DIR + 'rightTibiaNodeNumbers.txt') as infile:
             rightTibiaData = json.load(infile)
 
-        rightTibiaAttachmentNodeNums = rightTibiaData.values()
-        rightTibiaMuscleNames = rightTibiaData.keys()
+        rightTibiaAttachmentNodeNums = list(rightTibiaData.values())
+        rightTibiaMuscleNames = list(rightTibiaData.keys())
         rightTibiaMuscleNames = [str(item) for item in rightTibiaMuscleNames]
 
         # load in the fibula attachment node numbers
         with open(DATA_DIR + 'rightFibulaNodeNumbers.txt') as infile:
             rightFibulaData = json.load(infile)
 
-        rightFibulaAttachmentNodeNums = rightFibulaData.values()
-        rightFibulaMuscleNames = rightFibulaData.keys()
+        rightFibulaAttachmentNodeNums = list(rightFibulaData.values())
+        rightFibulaMuscleNames = list(rightFibulaData.keys())
         rightFibulaMuscleNames = [str(item) for item in rightFibulaMuscleNames]
 
         # load in the patella attachment node numbers
         with open(DATA_DIR + 'rightPatellaNodeNumbers.txt') as infile:
             rightPatellaData = json.load(infile)
 
-        rightPatellaAttachmentNodeNums = rightPatellaData.values()
-        rightPatellaMuscleNames = rightPatellaData.keys()
+        rightPatellaAttachmentNodeNums = list(rightPatellaData.values())
+        rightPatellaMuscleNames = list(rightPatellaData.keys())
         rightPatellaMuscleNames = [str(item) for item in rightPatellaMuscleNames]
 
         rightTibiaPoints, lhF = rightTib.triangulate([24, 24])
@@ -520,15 +525,8 @@ class gait2392MuscleCustomiser(object):
         )
 
     def customise(self):
-
-        init_muscle_ofl = dict([(m.name, m.optimalFiberLength) for m in self.gias_osimmodel.muscles.values()])
-        init_muscle_tsl = dict([(m.name, m.tendonSlackLength) for m in self.gias_osimmodel.muscles.values()])
-
-        # prescale muscles
-        self.prescale_muscles()
-
-        prescale_muscle_ofl = dict([(m.name, m.optimalFiberLength) for m in self.gias_osimmodel.muscles.values()])
-        prescale_muscle_tsl = dict([(m.name, m.tendonSlackLength) for m in self.gias_osimmodel.muscles.values()])
+        # Note: a number of PathPoints that were scaled in the previous plugin
+        # are also being scaled here. Are both of these necessary?
 
         self.cust_pelvis()
         self.cust_femur_l()
@@ -536,68 +534,31 @@ class gait2392MuscleCustomiser(object):
         self.cust_femur_r()
         self.cust_tibia_r()
 
-        # post-scale muscles
-        self.postscale_muscles()
+        # What is being done in the following methods that wasn't in the
+        # previous plugin or one of the cust (^) methods? They seem to be
+        # updating the same values that were updated earlier.
         self.updateHipMuscles()
         self.updateKneeMuscles()
         self.updateFootMuscles()
         self.updateWrapPoints()
+        # The Marker Set was quite comprehensively updated in the previous
+        # plugin, is the following method really important? Or better than the
+        # other one?
         self.updateMarkerSet()
 
         if self.config['update_max_iso_forces']:
             self.updateMaxIsoForces()
 
-        postscale_muscle_ofl = dict([(m.name, m.optimalFiberLength) for m in self.gias_osimmodel.muscles.values()])
-        postscale_muscle_tsl = dict([(m.name, m.tendonSlackLength) for m in self.gias_osimmodel.muscles.values()])
-
-        for mn in sorted(self.gias_osimmodel.muscles.keys()):
-            print('{} OFL: {:8.6f} -> {:8.6f} -> {:8.6f}'.format(
-                mn,
-                init_muscle_ofl[mn],
-                prescale_muscle_ofl[mn],
-                postscale_muscle_ofl[mn]
-            )
-            )
-        for mn in sorted(self.gias_osimmodel.muscles.keys()):
-            print('{} TSL: {:8.6f} -> {:8.6f} -> {:8.6f}'.format(
-                mn,
-                init_muscle_tsl[mn],
-                prescale_muscle_tsl[mn],
-                postscale_muscle_tsl[mn]
-            )
-            )
+        # Currently, none of the OFL and TSL values are being re-calculated
+        # after updating the PathPoints. They have been scaled in the previous
+        # plugin but could be done more accurately here.
 
         if self.config['write_osim_file']:
             self.write_cust_osim_model()
 
-    def prescale_muscles(self):
-        """
-        Apply prescaling and scaling to muscles before bodies and joints are
-        customised
-        """
-        state_0 = self.gias_osimmodel._model.initSystem()
-
-        # create dummy scale factor
-        scale_factors = [
-            osim.Scale([1, 1, 1], 'dummy_scale', 'dummy_body')
-        ]
-        for m in self.gias_osimmodel.muscles.values():
-            m.preScale(state_0, *scale_factors)
-            # m.scale(state_0, *scale_factors)
-
-    def postscale_muscles(self):
-        """
-        Postscale muscles after bodies and joints are customised to update
-        optimal fiber lengths and tendon slack lengths
-        """
-        state_1 = self.gias_osimmodel._model.initSystem()
-        # create dummy scale factor
-        scale_factors = [
-            osim.Scale([1, 1, 1], 'dummy_scale', 'dummy_body')
-        ]
-        for m in self.gias_osimmodel.muscles.values():
-            m.postScale(state_1, *scale_factors)
-
+    # This method assumes the current max iso force is in mm and multiplies it
+    # to get the value in cm. I'm not sure it should be doing this (or not like
+    # this at least). It should depend on the plugin configuration, right?
     def updateMaxIsoForces(self):
 
         osimModel = self.gias_osimmodel
@@ -605,15 +566,15 @@ class gait2392MuscleCustomiser(object):
         subjectMass = float(self.config['subject_mass'])
 
         # calculate muscle volumes using Handsfield (2014)
-        osimAbbr, muscleVolume = muscleVolumeCalculator.muscleVolumeCalculator(subjectHeight, subjectMass)
+        osimAbbr, muscleVolume = muscleVolumeCalculator(subjectHeight, subjectMass)
 
         # load Opensim model muscle set
         allMuscles = osimModel._model.getMuscles()
 
-        allMusclesNames = range(allMuscles.getSize());
-        oldValue = np.zeros([allMuscles.getSize(), 1]);
-        optimalFibreLength = np.zeros([allMuscles.getSize(), 1]);
-        penAngleAtOptFibLength = np.zeros([allMuscles.getSize(), 1]);
+        allMusclesNames = list(range(allMuscles.getSize()))
+        oldValue = np.zeros([allMuscles.getSize(), 1])
+        optimalFibreLength = np.zeros([allMuscles.getSize(), 1])
+        penAngleAtOptFibLength = np.zeros([allMuscles.getSize(), 1])
 
         for i in range(allMuscles.getSize()):
             allMusclesNames[i] = allMuscles.get(i).getName()
@@ -623,9 +584,10 @@ class gait2392MuscleCustomiser(object):
 
         # convert opt. fibre length from [m] to [cm] to match volume units
         # [cm^3]
+        # Shouldn't this (and the volume units) depend on the plugin config?
         optimalFibreLength *= 100;
 
-        allMusclesNamesCut = range(allMuscles.getSize())
+        allMusclesNamesCut = list(range(allMuscles.getSize()))
         for i in range(len(allMusclesNames)):
             # delete trailing '_r' or '_l'
             currMuscleName = allMusclesNames[i][0:-2];
@@ -679,7 +641,7 @@ class gait2392MuscleCustomiser(object):
                 # find all instances of each muscle
                 currMuscleNameIndex = [j for j, x in enumerate(allMusclesNamesCut) if x == currMuscleName]
                 # only require half of the results as we only need muscles from one side
-                currMuscleNameIndex = currMuscleNameIndex[0:len(currMuscleNameIndex) / 2]
+                currMuscleNameIndex = currMuscleNameIndex[0:int(len(currMuscleNameIndex) / 2)]
 
             # find how much of the total muscle volume this muscle contributes
             fracOfGroup[i] = oldValue[i] / sum(oldValue[currMuscleNameIndex]);
@@ -703,8 +665,9 @@ class gait2392MuscleCustomiser(object):
 
     def updateHipMuscles(self):
 
-        muscleNames = ['glut_max1_l', 'glut_max2_l', 'glut_max3_l', 'peri_l', 'iliacus_l', 'psoas_l', 'glut_max1_r',
-                       'glut_max2_r', 'glut_max3_r', 'peri_r', 'psoas_r', 'iliacus_r']
+        muscleNames = ['glut_max1_l', 'glut_max2_l', 'glut_max3_l', 'peri_l',
+                       'iliacus_l', 'psoas_l', 'glut_max1_r', 'glut_max2_r',
+                       'glut_max3_r', 'peri_r', 'psoas_r', 'iliacus_r']
         joint = 'hip'
         body = 'pelvis'
         # joint - the joint that the muscles cross (currently only works for muscles that cross a single joint)
@@ -734,10 +697,9 @@ class gait2392MuscleCustomiser(object):
             pathPoints = copy.copy(muscle.path_points)
 
             for j in range(len(pathPointsO)):
-
-                if (pathPointsO.values()[j].body.name == body):
-                    pathPointsO.values()[j].location -= transO
-                    pathPoints.values()[j].location -= trans
+                if list(pathPointsO.values())[j].body.name == body:
+                    list(pathPointsO.values())[j].location -= transO
+                    list(pathPoints.values())[j].location -= trans
 
                 ######################################################
                 #################Transform Points#####################
@@ -789,17 +751,19 @@ class gait2392MuscleCustomiser(object):
             # tranform the points back to the main body local coordinate system
             for j in range(len(pathPoints)):
 
-                if (pathPoints.values()[j].body.name == body):
-                    pathPoints.values()[j].location += trans
+                if list(pathPoints.values())[j].body.name == body:
+                    list(pathPoints.values())[j].location += trans
 
     def updateKneeMuscles(self):
 
         muscleNames = ['bifemlh_l', 'semimem_l', 'semiten_l', 'sar_l', 'tfl_l',
-                       'grac_l', 'rect_fem_l', 'bifemlh_r', 'semimem_r', 'semiten_r',
-                       'sar_r', 'tfl_r', 'grac_r', 'rect_fem_r', 'bifemsh_l', 'vas_med_l',
-                       'vas_int_l', 'vas_lat_l', 'bifemsh_r', 'vas_med_r', 'vas_int_r',
-                       'vas_lat_r', 'med_gas_l', 'lat_gas_l', 'med_gas_r', 'lat_gas_r']
+                       'grac_l', 'rect_fem_l', 'bifemlh_r', 'semimem_r',
+                       'semiten_r', 'sar_r', 'tfl_r', 'grac_r', 'rect_fem_r',
+                       'bifemsh_l', 'vas_med_l', 'vas_int_l', 'vas_lat_l',
+                       'bifemsh_r', 'vas_med_r', 'vas_int_r', 'vas_lat_r',
+                       'med_gas_l', 'lat_gas_l', 'med_gas_r', 'lat_gas_r']
 
+        # This is being done multiple times. Should move outside this method.
         # load in the original model
         mO = osim.Model(TEMPLATE_OSIM_PATH)
 
@@ -816,14 +780,16 @@ class gait2392MuscleCustomiser(object):
             pathPoints = copy.copy(muscle.path_points)
 
             for j in range(len(pathPointsO)):
-                pathPointsO.values()[j].location += localOsim2Global(pathPointsO.values()[j].body.name, mO)
-                pathPoints.values()[j].location += localOsim2Global(pathPoints.values()[j].body.name,
-                                                                    self.gias_osimmodel)
+                list(pathPointsO.values())[j].location += local_osim_2_global(
+                    list(pathPointsO.values())[j].body.name, mO)
+                list(pathPoints.values())[j].location += local_osim_2_global(
+                    list(pathPoints.values())[j].body.name,
+                    self.gias_osimmodel)
 
             # find the path point names for the origin and the insertion
             sortedKeys = sorted(muscle.path_points.keys())
 
-            # the origin will be the first sorted key and the insertion the last
+            # the origin will be the first sorted key and the insertion last
             orig = sortedKeys[0]
             ins = sortedKeys[-1]
 
@@ -864,8 +830,9 @@ class gait2392MuscleCustomiser(object):
 
             # tranform the pelvis points back to the pelvis region
             for j in range(len(pathPoints)):
-                pathPoints.values()[j].location -= localOsim2Global(pathPoints.values()[j].body.name,
-                                                                    self.gias_osimmodel)
+                list(pathPoints.values())[j].location -= local_osim_2_global(
+                    list(pathPoints.values())[j].body.name,
+                    self.gias_osimmodel)
 
     def updateFootMuscles(self):
 
@@ -976,7 +943,8 @@ class gait2392MuscleCustomiser(object):
             theta = np.linspace(0, 2 * pi, 100)
             phi = np.linspace(0, pi, 50)
             sphere = np.zeros([1, 3])
-            wrapCentre = wrap.translation
+
+            wrapCentre = wrap.get_translation()
 
             for j in range(len(theta)):
                 for k in range(len(phi)):
@@ -1020,10 +988,12 @@ class gait2392MuscleCustomiser(object):
 
             nodeNum = np.argmin(normDists)
 
-            d1 = np.linalg.norm(wrapCentre - sphere[nodeNum])
+            np_wrap_centre = np.array(
+                [wrapCentre[0], wrapCentre[1], wrapCentre[2]])
+            d1 = np.linalg.norm(np_wrap_centre - sphere[nodeNum])
 
             # find the distance between the point and the centre of the sphere
-            d2 = np.linalg.norm(wrapCentre - (checkPoint.location + trans))
+            d2 = np.linalg.norm(np_wrap_centre - (checkPoint.location + trans))
 
             # If the distance d1 is larger than d2 move the point is inside the sphere
             # and needs to be moved to the closest point on the sphere
@@ -1120,7 +1090,9 @@ class gait2392MuscleCustomiser(object):
 
         state = self.gias_osimmodel._model.initSystem()
 
-        # load in the geometric fields and update their coordinate systems to align with opensim
+        # load in the geometric fields and update their coordinate systems to
+        # align with opensim.
+        # This may have already been done?
         pelvis = self.ll.models['pelvis']
 
         femur_l = self.ll.models['femur-l']
@@ -1232,5 +1204,5 @@ class gait2392MuscleCustomiser(object):
                 print('{} can not be identified as a valid landmark'.
                       format(i))
 
-            # update the marker set of the model
-        self.gias_osimmodel._model.replaceMarkerSet(state, markerSet)
+        # update the marker set of the model
+        self.gias_osimmodel.set_marker_set(markerSet)
