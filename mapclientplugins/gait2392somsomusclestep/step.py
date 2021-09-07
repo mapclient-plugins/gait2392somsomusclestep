@@ -6,8 +6,10 @@ import json
 from PySide2 import QtGui
 
 from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
-from mapclientplugins.gait2392somsomusclestep.configuredialog import ConfigureDialog
-from mapclientplugins.gait2392somsomusclestep.gait2392musclecustsomso import gait2392MuscleCustomiser
+from mapclientplugins.gait2392somsomusclestep.configuredialog import \
+    ConfigureDialog
+from mapclientplugins.gait2392somsomusclestep.gait2392musclecustsomso import \
+    Gait2392MuscleCustomiser
 
 
 class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
@@ -29,29 +31,33 @@ class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
     """
 
     def __init__(self, location):
-        super(FieldworkGait2392SomsoMuscleStep, self).__init__('Gait2392 SOMSO Muscle', location)
-        self._configured = False  # A step cannot be executed until it has been configured.
+        super(FieldworkGait2392SomsoMuscleStep, self).__init__(
+            'Gait2392 SOMSO Muscle', location)
+        # A step cannot be executed until it has been configured.
+        self._configured = False
         self._category = 'OpenSim'
         # Add any other initialisation code here:
-        self._icon = QtGui.QImage(':/fieldworkgait2392musclehmfstep/images/morphometric.png')
+        self._icon = QtGui.QImage(
+            ':/fieldworkgait2392musclehmfstep/images/morphometric.png')
         # Ports:
-        self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
-                      'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
-                      'http://physiomeproject.org/workflow/1.0/rdf-schema#gias-lowerlimb'))
-        self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
-                      'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
-                      'http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel'))
-        self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
-                      'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
-                      'http://physiomeproject.org/workflow/1.0/rdf-schema#landmarks'))
-        self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
-                      'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
-                      'http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel'))
-        # Port data:
-        self._portData0 = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#gias-lowerlimb
-        self._portData1 = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
-        self._portData2 = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#landmarks
-        self._portData3 = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
+        self.addPort(
+            ('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
+             'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
+             'http://physiomeproject.org/workflow/1.0/rdf-schema#gias-'
+             'lowerlimb'))
+        self.addPort(
+            ('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
+             'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
+             'http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel'))
+        self.addPort(
+            ('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
+             'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
+             # 'http://physiomeproject.org/workflow/1.0/rdf-schema#landmarks'))
+             'ju#fieldworkmodeldict'))
+        self.addPort(
+            ('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
+             'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
+             'http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel'))
 
         # Config:
         self._config = {}
@@ -66,15 +72,14 @@ class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
         self._config['subject_height'] = ''
         self._config['subject_mass'] = ''
 
-        self._g2392_somso_muscle = gait2392MuscleCustomiser(self._config)
+        self._g2392_somso_muscle = Gait2392MuscleCustomiser(self._config)
 
     def execute(self):
         """
         Add your code here that will kick off the execution of the step.
-        Make sure you call the _doneExecution() method when finished.  This method
-        may be connected up to a button in a widget for example.
+        Make sure you call the _doneExecution() method when finished. This
+        method may be connected up to a button in a widget for example.
         """
-        # Put your execute step code here before calling the '_doneExecution' method.
         self._g2392_somso_muscle.config = self._config
         self._g2392_somso_muscle.customise()
         self._doneExecution()
@@ -82,24 +87,26 @@ class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
     def setPortData(self, index, dataIn):
         """
         Add your code here that will set the appropriate objects for this step.
-        The index is the index of the port in the port list.  If there is only one
-        uses port for this step then the index can be ignored.
+        The index is the index of the port in the port list.  If there is only
+        one uses port for this step then the index can be ignored.
         """
         if index == 0:
-            self._g2392_somso_muscle.ll = dataIn  # http://physiomeproject.org/workflow/1.0/rdf-schema#gias-lowerlimb
+            # http://physiomeproject.org/workflow/1.0/rdf-schema#gias-lowerlimb
+            self._g2392_somso_muscle.ll = dataIn
         elif index == 1:
-            self._g2392_somso_muscle.set_osim_model(
-                dataIn)  # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
+            # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
+            self._g2392_somso_muscle.set_osim_model(dataIn)
         elif index == 2:
             self._g2392_somso_muscle.landmarks = dataIn
 
     def getPortData(self, index):
         """
-        Add your code here that will return the appropriate objects for this step.
-        The index is the index of the port in the port list.  If there is only one
-        provides port for this step then the index can be ignored.
+        Add your code here that will return the appropriate objects for this
+        step. The index is the index of the port in the port list.  If there is
+        only one provides port for this step then the index can be ignored.
         """
-        return self._g2392_somso_muscle.gias_osimmodel._model  # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
+        # http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel
+        return self._g2392_somso_muscle.gias_osimmodel._model
 
     def configure(self):
         """
@@ -138,7 +145,8 @@ class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
         Add code to serialize this step to string.  This method should
         implement the opposite of 'deserialize'.
         """
-        return json.dumps(self._config, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(self._config, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
 
     def deserialize(self, string):
         """
