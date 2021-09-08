@@ -254,7 +254,8 @@ class Gait2392MuscleCustomiser(object):
             pathPoints = muscle.path_points
             s = sorted(muscle.path_points.keys())
 
-            # aSite will be 0 if the attachment is an origin and -1 if insertion
+            aSite = None
+            # aSite will be 0 if attachment is an origin and -1 if insertion
             if pathPoints[s[0]].body.name == 'pelvis':
                 aSite = 0
             elif pathPoints[s[-1]].body.name == 'pelvis':
@@ -282,16 +283,20 @@ class Gait2392MuscleCustomiser(object):
         # the muscle attachments were selected an a 24x24 mesh
         leftFemurPoints, lhF = leftFemur.gf.triangulate([24, 24])
 
-        # align the discretised femur points and the muscle attachments to the opensims femur local coordinate system
+        # align the discretised femur points and the muscle attachments to the
+        # opensims femur local coordinate system
         localLeftFemurPoints = leftFemur.acs.map_local(leftFemurPoints) / 1000
-        leftFemurAttachments = localLeftFemurPoints[leftFemurAttachmentNodeNums]
+        leftFemurAttachments = localLeftFemurPoints[
+            leftFemurAttachmentNodeNums]
 
         for i in range(len(leftFemurMuscleNames)):
-            muscleLeft = self.gias_osimmodel.muscles[str(leftFemurMuscleNames[i])]
+            muscleLeft = self.gias_osimmodel.muscles[
+                str(leftFemurMuscleNames[i])]
             pathPointsLeft = muscleLeft.path_points
             sL = sorted(muscleLeft.path_points.keys())
 
-            # aSite will be 0 if the attachment is an origin and -1 if insertion
+            aSite = None
+            # aSite will be 0 if attachment is an origin and -1 if insertion
             if pathPointsLeft[sL[0]].body.name == 'femur_l':
                 aSite = 0
             elif pathPointsLeft[sL[-1]].body.name == 'femur_l':
@@ -318,16 +323,20 @@ class Gait2392MuscleCustomiser(object):
 
         rightFemurPoints, rhF = rightFemur.gf.triangulate([24, 24])
 
-        localRightFemurPoints = rightFemur.acs.map_local(rightFemurPoints) / 1000
-        rightFemurAttachments = localRightFemurPoints[rightFemurAttachmentNodeNums]
+        localRightFemurPoints = rightFemur.acs.map_local(
+            rightFemurPoints) / 1000
+        rightFemurAttachments = localRightFemurPoints[
+            rightFemurAttachmentNodeNums]
 
         # update attachments
         for i in range(len(rightFemurMuscleNames)):
-            muscleRight = self.gias_osimmodel.muscles[str(rightFemurMuscleNames[i])]
+            muscleRight = self.gias_osimmodel.muscles[
+                str(rightFemurMuscleNames[i])]
             pathPointsRight = muscleRight.path_points
             sR = sorted(muscleRight.path_points.keys())
 
-            # aSite will be 0 if the attachment is an origin and -1 if insertion
+            aSite = None
+            # aSite will be 0 if attachment is an origin and -1 if insertion
             if pathPointsRight[sR[0]].body.name == 'femur_r':
                 aSite = 0
             elif pathPointsRight[sR[-1]].body.name == 'femur_r':
@@ -345,8 +354,6 @@ class Gait2392MuscleCustomiser(object):
         update_tibiafibula_opensim_acs(leftTibFib)
 
         leftTib, leftFib = split_tibia_fibula_gfs(leftTibFib.gf)
-
-        leftTibia = bonemodels.TibiaFibulaModel('tibia', leftTibFib.gf)
 
         # load in the tibia muscle attachment node numbers
         with open(DATA_DIR + 'leftTibiaNodeNumbers.txt') as infile:
@@ -377,21 +384,28 @@ class Gait2392MuscleCustomiser(object):
         leftPatellaPoints, lhf = leftPatella.gf.triangulate([24, 24])
 
         localLeftTibiaPoints = leftTibFib.acs.map_local(leftTibiaPoints) / 1000
-        leftTibiaAttachments = localLeftTibiaPoints[leftTibiaAttachmentNodeNums]
+        leftTibiaAttachments = localLeftTibiaPoints[
+            leftTibiaAttachmentNodeNums]
 
-        localLeftFibulaPoints = leftTibFib.acs.map_local(leftFibulaPoints) / 1000
-        leftFibulaAttachments = localLeftFibulaPoints[leftFibulaAttachmentNodeNums]
+        localLeftFibulaPoints = leftTibFib.acs.map_local(
+            leftFibulaPoints) / 1000
+        leftFibulaAttachments = localLeftFibulaPoints[
+            leftFibulaAttachmentNodeNums]
 
-        localLeftPatellaPoints = leftTibFib.acs.map_local(leftPatellaPoints) / 1000
-        leftPatellaAttachments = localLeftPatellaPoints[leftPatellaAttachmentNodeNums]
+        localLeftPatellaPoints = leftTibFib.acs.map_local(
+            leftPatellaPoints) / 1000
+        leftPatellaAttachments = localLeftPatellaPoints[
+            leftPatellaAttachmentNodeNums]
 
         # update the tibia attachments
         for i in range(len(leftTibiaMuscleNames)):
-            muscleLeft = self.gias_osimmodel.muscles[str(leftTibiaMuscleNames[i])]
+            muscleLeft = self.gias_osimmodel.muscles[
+                str(leftTibiaMuscleNames[i])]
             pathPointsLeft = muscleLeft.path_points
             sL = sorted(muscleLeft.path_points.keys())
 
-            # aSite will be 0 if the attachment is an origin and -1 if insertion
+            aSite = None
+            # aSite will be 0 if attachment is an origin and -1 if insertion
             if pathPointsLeft[sL[0]].body.name == 'tibia_l':
                 aSite = 0
             elif pathPointsLeft[sL[-1]].body.name == 'tibia_l':
@@ -402,11 +416,13 @@ class Gait2392MuscleCustomiser(object):
 
         # update the fibula attachments
         for i in range(len(leftFibulaMuscleNames)):
-            muscleLeft = self.gias_osimmodel.muscles[str(leftFibulaMuscleNames[i])]
+            muscleLeft = self.gias_osimmodel.muscles[
+                str(leftFibulaMuscleNames[i])]
             pathPointsLeft = muscleLeft.path_points
             sL = sorted(muscleLeft.path_points.keys())
 
-            # aSite will be 0 if the attachment is an origin and -1 if insertion
+            aSite = None
+            # aSite will be 0 if attachment is an origin and -1 if insertion
             if pathPointsLeft[sL[0]].body.name == 'tibia_l':
                 aSite = 0
             elif pathPointsLeft[sL[-1]].body.name == 'tibia_l':
@@ -417,11 +433,13 @@ class Gait2392MuscleCustomiser(object):
 
         # update the patella attachments
         for i in range(len(leftPatellaMuscleNames)):
-            muscleLeft = self.gias_osimmodel.muscles[str(leftPatellaMuscleNames[i])]
+            muscleLeft = self.gias_osimmodel.muscles[
+                str(leftPatellaMuscleNames[i])]
             pathPointsLeft = muscleLeft.path_points
             sL = sorted(muscleLeft.path_points.keys())
 
-            # aSite will be 0 if the attachment is an origin and -1 if insertion
+            aSite = None
+            # aSite will be 0 if attachment is an origin and -1 if insertion
             if pathPointsLeft[sL[0]].body.name == 'tibia_l':
                 aSite = 0
             elif pathPointsLeft[sL[-1]].body.name == 'tibia_l':
@@ -437,8 +455,6 @@ class Gait2392MuscleCustomiser(object):
         update_tibiafibula_opensim_acs(rightTibFib)
 
         rightTib, rightFib = split_tibia_fibula_gfs(rightTibFib.gf)
-
-        rightTibia = bonemodels.TibiaFibulaModel('tibia', rightTibFib.gf)
 
         # load in the tibia attachment node numbers
         with open(DATA_DIR + 'rightTibiaNodeNumbers.txt') as infile:
@@ -462,27 +478,36 @@ class Gait2392MuscleCustomiser(object):
 
         rightPatellaAttachmentNodeNums = list(rightPatellaData.values())
         rightPatellaMuscleNames = list(rightPatellaData.keys())
-        rightPatellaMuscleNames = [str(item) for item in rightPatellaMuscleNames]
+        rightPatellaMuscleNames = [
+            str(item) for item in rightPatellaMuscleNames]
 
         rightTibiaPoints, lhF = rightTib.triangulate([24, 24])
         rightFibulaPoints, lhF = rightFib.triangulate([24, 24])
         rightPatellaPoints, lhf = rightPatella.gf.triangulate([24, 24])
 
-        localRightTibiaPoints = rightTibFib.acs.map_local(rightTibiaPoints) / 1000
-        rightTibiaAttachments = localRightTibiaPoints[rightTibiaAttachmentNodeNums]
+        localRightTibiaPoints = rightTibFib.acs.map_local(
+            rightTibiaPoints) / 1000
+        rightTibiaAttachments = localRightTibiaPoints[
+            rightTibiaAttachmentNodeNums]
 
-        localRightFibulaPoints = rightTibFib.acs.map_local(rightFibulaPoints) / 1000
-        rightFibulaAttachments = localRightFibulaPoints[rightFibulaAttachmentNodeNums]
+        localRightFibulaPoints = rightTibFib.acs.map_local(
+            rightFibulaPoints) / 1000
+        rightFibulaAttachments = localRightFibulaPoints[
+            rightFibulaAttachmentNodeNums]
 
-        localRightPatellaPoints = rightTibFib.acs.map_local(rightPatellaPoints) / 1000
-        rightPatellaAttachments = localRightPatellaPoints[rightPatellaAttachmentNodeNums]
+        localRightPatellaPoints = rightTibFib.acs.map_local(
+            rightPatellaPoints) / 1000
+        rightPatellaAttachments = localRightPatellaPoints[
+            rightPatellaAttachmentNodeNums]
 
         for i in range(len(rightTibiaMuscleNames)):
-            muscleRight = self.gias_osimmodel.muscles[str(rightTibiaMuscleNames[i])]
+            muscleRight = self.gias_osimmodel.muscles[
+                str(rightTibiaMuscleNames[i])]
             pathPointsRight = muscleRight.path_points
             sR = sorted(muscleRight.path_points.keys())
 
-            # aSite will be 0 if the attachment is an origin and -1 if insertion
+            aSite = None
+            # aSite will be 0 if attachment is an origin and -1 if insertion
             if pathPointsRight[sR[0]].body.name == 'tibia_r':
                 aSite = 0
             elif pathPointsRight[sR[-1]].body.name == 'tibia_r':
@@ -492,11 +517,13 @@ class Gait2392MuscleCustomiser(object):
             ppR.location = rightTibiaAttachments[i]
 
         for i in range(len(rightFibulaMuscleNames)):
-            muscleRight = self.gias_osimmodel.muscles[str(rightFibulaMuscleNames[i])]
+            muscleRight = self.gias_osimmodel.muscles[
+                str(rightFibulaMuscleNames[i])]
             pathPointsRight = muscleRight.path_points
             sR = sorted(muscleRight.path_points.keys())
 
-            # aSite will be 0 if the attachment is an origin and -1 if insertion
+            aSite = None
+            # aSite will be 0 if attachment is an origin and -1 if insertion
             if pathPointsRight[sR[0]].body.name == 'tibia_r':
                 aSite = 0
             elif pathPointsRight[sR[-1]].body.name == 'tibia_r':
@@ -506,11 +533,13 @@ class Gait2392MuscleCustomiser(object):
             ppR.location = rightFibulaAttachments[i]
 
         for i in range(len(rightPatellaMuscleNames)):
-            muscleRight = self.gias_osimmodel.muscles[str(rightPatellaMuscleNames[i])]
+            muscleRight = self.gias_osimmodel.muscles[
+                str(rightPatellaMuscleNames[i])]
             pathPointsRight = muscleRight.path_points
             sR = sorted(muscleRight.path_points.keys())
 
-            # aSite will be 0 if the attachment is an origin and -1 if insertion
+            aSite = None
+            # aSite will be 0 if attachment is an origin and -1 if insertion
             if pathPointsRight[sR[0]].body.name == 'tibia_r':
                 aSite = 0
             elif pathPointsRight[sR[-1]].body.name == 'tibia_r':
@@ -537,17 +566,17 @@ class Gait2392MuscleCustomiser(object):
         # What is being done in the following methods that wasn't in the
         # previous plugin or one of the cust (^) methods? They seem to be
         # updating the same values that were updated earlier.
-        self.updateHipMuscles()
-        self.updateKneeMuscles()
-        self.updateFootMuscles()
-        self.updateWrapPoints()
+        self.update_hip_muscles()
+        self.update_knee_muscles()
+        self.update_foot_muscles()
+        self.update_wrap_points()
         # The Marker Set was quite comprehensively updated in the previous
         # plugin, is the following method really important? Or better than the
         # other one?
-        self.updateMarkerSet()
+        self.update_marker_set()
 
         if self.config['update_max_iso_forces']:
-            self.updateMaxIsoForces()
+            self.update_max_iso_forces()
 
         # Currently, none of the OFL and TSL values are being re-calculated
         # after updating the PathPoints. They have been scaled in the previous
@@ -559,17 +588,18 @@ class Gait2392MuscleCustomiser(object):
     # This method assumes the current max iso force is in mm and multiplies it
     # to get the value in cm. I'm not sure it should be doing this (or not like
     # this at least). It should depend on the plugin configuration, right?
-    def updateMaxIsoForces(self):
+    def update_max_iso_forces(self):
 
         osimModel = self.gias_osimmodel
         subjectHeight = float(self.config['subject_height'])
         subjectMass = float(self.config['subject_mass'])
 
         # calculate muscle volumes using Handsfield (2014)
-        osimAbbr, muscleVolume = muscleVolumeCalculator(subjectHeight, subjectMass)
+        osimAbbr, muscleVolume = muscleVolumeCalculator(
+            subjectHeight, subjectMass)
 
         # load Opensim model muscle set
-        allMuscles = osimModel._model.getMuscles()
+        allMuscles = osimModel.get_muscles()
 
         allMusclesNames = list(range(allMuscles.getSize()))
         oldValue = np.zeros([allMuscles.getSize(), 1])
@@ -580,58 +610,66 @@ class Gait2392MuscleCustomiser(object):
             allMusclesNames[i] = allMuscles.get(i).getName()
             oldValue[i] = allMuscles.get(i).getMaxIsometricForce()
             optimalFibreLength[i] = allMuscles.get(i).getOptimalFiberLength()
-            penAngleAtOptFibLength[i] = np.rad2deg(allMuscles.get(i).getPennationAngleAtOptimalFiberLength())
+            penAngleAtOptFibLength[i] = np.rad2deg(
+                allMuscles.get(i).getPennationAngleAtOptimalFiberLength())
 
         # convert opt. fibre length from [m] to [cm] to match volume units
         # [cm^3]
         # Shouldn't this (and the volume units) depend on the plugin config?
-        optimalFibreLength *= 100;
+        optimalFibreLength *= 100
 
         allMusclesNamesCut = list(range(allMuscles.getSize()))
         for i in range(len(allMusclesNames)):
             # delete trailing '_r' or '_l'
-            currMuscleName = allMusclesNames[i][0:-2];
+            currMuscleName = allMusclesNames[i][0:-2]
 
             # split the name from any digit in its name and only keep the first
             # string.
-            currMuscleName = re.split('(\d+)', currMuscleName)
+            currMuscleName = re.split(r'(\d+)', currMuscleName)
             currMuscleName = currMuscleName[0]
 
             # store in cell
             allMusclesNamesCut[i] = currMuscleName
 
-        # calculate ratio of old max isometric forces for multiple-lines-of-action muscles.
-        newAbsVolume = np.zeros([allMuscles.getSize(), 1]);
-        fracOfGroup = np.zeros([allMuscles.getSize(), 1]);
+        # calculate ratio of old max isometric forces for
+        # multiple-lines-of-action muscles.
+        newAbsVolume = np.zeros([allMuscles.getSize(), 1])
+        fracOfGroup = np.zeros([allMuscles.getSize(), 1])
 
         for i in range(allMuscles.getSize()):
 
             currMuscleName = allMusclesNamesCut[i]
-            currIndex = [j for j, x in enumerate(osimAbbr) if x == currMuscleName]
+            currIndex = [
+                j for j, x in enumerate(osimAbbr) if x == currMuscleName]
             # currIndex = osimAbbr.index(currMuscleName)
             if currIndex:
-                currValue = muscleVolume[currIndex];
-                newAbsVolume[i] = currValue;
+                currValue = muscleVolume[currIndex]
+                newAbsVolume[i] = currValue
 
-            # The peroneus longus/brevis and the extensors (EDL, EHL) have
-            # to be treated seperatly as they are represented as a combined muscle
-            # group in Handsfield, 2014. The following method may not be the best!
+            # The peroneus longus/brevis and the extensors (EDL, EHL) have to
+            # be treated seperatly as they are represented as a combined muscle
+            # group in Handsfield, 2014. The following method may not be the
+            # best!
             if currMuscleName == 'per_brev' or currMuscleName == 'per_long':
                 currMuscleNameIndex = np.array([0, 0])
-                tmpIndex = [j for j, x in enumerate(allMusclesNamesCut) if x == 'per_brev']
+                tmpIndex = [j for j, x in enumerate(
+                    allMusclesNamesCut) if x == 'per_brev']
                 currMuscleNameIndex[0] = tmpIndex[0]
-                tmpIndex = [j for j, x in enumerate(allMusclesNamesCut) if x == 'per_long']
+                tmpIndex = [j for j, x in enumerate(
+                    allMusclesNamesCut) if x == 'per_long']
                 currMuscleNameIndex[1] = tmpIndex[0]
 
                 currIndex = [j for j, x in enumerate(osimAbbr) if x == 'per_']
                 currValue = muscleVolume[currIndex]
-                newAbsVolume[i] = currValue;
+                newAbsVolume[i] = currValue
 
             elif currMuscleName == 'ext_dig' or currMuscleName == 'ext_hal':
                 currMuscleNameIndex = np.array([0, 0])
-                tmpIndex = [j for j, x in enumerate(allMusclesNamesCut) if x == 'ext_dig']
+                tmpIndex = [j for j, x in enumerate(
+                    allMusclesNamesCut) if x == 'ext_dig']
                 currMuscleNameIndex[0] = tmpIndex[0]
-                tmpIndex = [j for j, x in enumerate(allMusclesNamesCut) if x == 'ext_hal']
+                tmpIndex = [j for j, x in enumerate(
+                    allMusclesNamesCut) if x == 'ext_hal']
                 currMuscleNameIndex[1] = tmpIndex[0]
 
                 currIndex = [j for j, x in enumerate(osimAbbr) if x == 'ext_']
@@ -639,46 +677,52 @@ class Gait2392MuscleCustomiser(object):
                 newAbsVolume[i] = currValue
             else:
                 # find all instances of each muscle
-                currMuscleNameIndex = [j for j, x in enumerate(allMusclesNamesCut) if x == currMuscleName]
-                # only require half of the results as we only need muscles from one side
-                currMuscleNameIndex = currMuscleNameIndex[0:int(len(currMuscleNameIndex) / 2)]
+                currMuscleNameIndex = [j for j, x in enumerate(
+                    allMusclesNamesCut) if x == currMuscleName]
+                # only require half of the results as we only need muscles from
+                # one side
+                currMuscleNameIndex = currMuscleNameIndex[0:int(len(
+                    currMuscleNameIndex) / 2)]
 
             # find how much of the total muscle volume this muscle contributes
-            fracOfGroup[i] = oldValue[i] / sum(oldValue[currMuscleNameIndex]);
+            fracOfGroup[i] = oldValue[i] / sum(oldValue[currMuscleNameIndex])
 
         # calculate new maximal isometric muscle forces
 
         specificTension = 61  # N/cm^2 from Zajac 1989
-        newVolume = fracOfGroup * newAbsVolume;
-        # maxIsoMuscleForce = specificTension * (newVolume/optimalFibreLength) * np.cos(math.degrees(penAngleAtOptFibLength))
+        newVolume = fracOfGroup * newAbsVolume
+        # maxIsoMuscleForce = specificTension * (newVolume/optimalFibreLength)
+        # * np.cos(math.degrees(penAngleAtOptFibLength))
 
-        # Update muscles of loaded model (in workspace only!), change model name and print new osim file.
+        # Update muscles of loaded model (in workspace only!), change model
+        # name and print new osim file.
         maxIsoMuscleForce = np.zeros([allMuscles.getSize(), 1])
         for i in range(allMuscles.getSize()):
-            maxIsoMuscleForce[i] = specificTension * (newVolume[i] / optimalFibreLength[i]) * np.cos(
+            maxIsoMuscleForce[i] = specificTension * (
+                    newVolume[i] / optimalFibreLength[i]) * np.cos(
                 math.radians(penAngleAtOptFibLength[i]))
 
             # only update, if new value is not zero. Else do not override the
             # original value.
             if maxIsoMuscleForce[i] != 0:
-                allMuscles.get(i).setMaxIsometricForce(maxIsoMuscleForce[i][0]);
+                allMuscles.get(i).setMaxIsometricForce(maxIsoMuscleForce[i][0])
 
-    def updateHipMuscles(self):
+    def update_hip_muscles(self):
 
         muscleNames = ['glut_max1_l', 'glut_max2_l', 'glut_max3_l', 'peri_l',
                        'iliacus_l', 'psoas_l', 'glut_max1_r', 'glut_max2_r',
                        'glut_max3_r', 'peri_r', 'psoas_r', 'iliacus_r']
         joint = 'hip'
         body = 'pelvis'
-        # joint - the joint that the muscles cross (currently only works for muscles that cross a single joint)
+        # joint - the joint that the muscles cross (currently only works for
+        # muscles that cross a single joint)
         # body - the body that the origins of the muscles are attached to
 
         # this has only been tested for muscles that cross the hip
 
         # load in the original model
         mO = osim.Model(TEMPLATE_OSIM_PATH)
-
-        stateO = mO._model.initSystem()
+        mO.init_system()
 
         # for each muscle
         for i in range(len(muscleNames)):
@@ -689,7 +733,8 @@ class Gait2392MuscleCustomiser(object):
 
             side = muscle.name[-2:]
 
-            # find the transformation between the two bodies the muscles are attached to
+            # find the transformation between the two bodies the muscles are
+            # attached to
             transO = mO.joints[joint + side].locationInParent
             trans = self.gias_osimmodel.joints[joint + side].locationInParent
 
@@ -701,14 +746,14 @@ class Gait2392MuscleCustomiser(object):
                     list(pathPointsO.values())[j].location -= transO
                     list(pathPoints.values())[j].location -= trans
 
-                ######################################################
-                #################Transform Points#####################
-                ######################################################
+                # ################################################## #
+                # ###############Transform Points################### #
+                # ################################################## #
 
             # find the path point names for the origin and the insertion
             sortedKeys = sorted(muscle.path_points.keys())
 
-            # the origin will be the first sorted key and the insertion the last
+            # the origin will be the first sorted key and the insertion last
             orig = sortedKeys[0]
             ins = sortedKeys[-1]
 
@@ -716,8 +761,8 @@ class Gait2392MuscleCustomiser(object):
             v1 = pathPoints[orig].location - pathPointsO[orig].location
             v2 = pathPoints[ins].location - pathPointsO[ins].location
 
-            # the new points are going to be found by translating the points based on a
-            # weighting mulitplied by these two vectors
+            # the new points are going to be found by translating the points
+            # based on a weighting mulitplied by these two vectors
 
             # the weighting will be how far along the muscle the point it
 
@@ -726,14 +771,16 @@ class Gait2392MuscleCustomiser(object):
             lengths = np.zeros(len(pathPointsO) - 1)
 
             for j in range(len(pathPointsO) - 1):
-                segments[j] = pathPointsO[muscle.name + '-P' + str(j + 2)].location - pathPointsO[
+                segments[j] = pathPointsO[muscle.name + '-P' + str(
+                    j + 2)].location - pathPointsO[
                     muscle.name + '-P' + str(j + 1)].location
                 lengths[j] = np.linalg.norm(segments[j])
 
             Tl = np.sum(lengths)
 
             # Define the weighting function
-            # for the points calculate the magnitude of the new vector and at what angle
+            # for the points calculate the magnitude of the new vector and at
+            # what angle
 
             for j in range(len(pathPointsO) - 2):
                 # the second pathpoint will be the first via point
@@ -746,7 +793,8 @@ class Gait2392MuscleCustomiser(object):
                 pNew = ((dl / Tl) * v2) + ((1 - dl / Tl) * v1) + p
 
                 # update the opensim model
-                muscle.path_points[muscle.name + '-P' + str(j + 2)].location = pNew
+                muscle.path_points[muscle.name + '-P' + str(
+                    j + 2)].location = pNew
 
             # tranform the points back to the main body local coordinate system
             for j in range(len(pathPoints)):
@@ -754,7 +802,7 @@ class Gait2392MuscleCustomiser(object):
                 if list(pathPoints.values())[j].body.name == body:
                     list(pathPoints.values())[j].location += trans
 
-    def updateKneeMuscles(self):
+    def update_knee_muscles(self):
 
         muscleNames = ['bifemlh_l', 'semimem_l', 'semiten_l', 'sar_l', 'tfl_l',
                        'grac_l', 'rect_fem_l', 'bifemlh_r', 'semimem_r',
@@ -766,15 +814,12 @@ class Gait2392MuscleCustomiser(object):
         # This is being done multiple times. Should move outside this method.
         # load in the original model
         mO = osim.Model(TEMPLATE_OSIM_PATH)
-
-        stateO = mO._model.initSystem()
+        mO.init_system()
 
         for i in range(len(muscleNames)):
             # display the pathpoints for both muscles
             muscleO = mO.muscles[muscleNames[i]]
             muscle = self.gias_osimmodel.muscles[muscleNames[i]]
-
-            side = muscle.name[-1]
 
             pathPointsO = copy.copy(muscleO.path_points)
             pathPoints = copy.copy(muscle.path_points)
@@ -797,8 +842,8 @@ class Gait2392MuscleCustomiser(object):
             v1 = pathPoints[orig].location - pathPointsO[orig].location
             v2 = pathPoints[ins].location - pathPointsO[ins].location
 
-            # the new points are going to be found by translating the points based on a 
-            # weighting mulitplied by these two vectors
+            # the new points are going to be found by translating the points
+            # based on a weighting mulitplied by these two vectors
 
             # the weighting will be how far along the muscle the point it
 
@@ -806,14 +851,15 @@ class Gait2392MuscleCustomiser(object):
             segments = np.zeros([len(pathPointsO) - 1, 3])
             lengths = np.zeros(len(pathPointsO) - 1)
             for j in range(len(pathPointsO) - 1):
-                segments[j] = pathPointsO[muscle.name + '-P' + str(j + 2)].location - pathPointsO[
+                segments[j] = pathPointsO[muscle.name + '-P' + str(
+                    j + 2)].location - pathPointsO[
                     muscle.name + '-P' + str(j + 1)].location
                 lengths[j] = np.linalg.norm(segments[j])
 
             Tl = np.sum(lengths)
 
-            # Define the weighting function
-            # for the points calculate the magnitude of the new vector and at what angle
+            # Define the weighting function for the points calculate the
+            # magnitude of the new vector and at what angle
 
             for j in range(len(pathPointsO) - 2):
                 # the second pathpoint will be the first via point
@@ -826,7 +872,8 @@ class Gait2392MuscleCustomiser(object):
                 pNew = ((dl / Tl) * v2) + ((1 - dl / Tl) * v1) + p
 
                 # update the opensim model
-                muscle.path_points[muscle.name + '-P' + str(j + 2)].location = pNew
+                muscle.path_points[muscle.name + '-P' + str(
+                    j + 2)].location = pNew
 
             # tranform the pelvis points back to the pelvis region
             for j in range(len(pathPoints)):
@@ -834,16 +881,17 @@ class Gait2392MuscleCustomiser(object):
                     list(pathPoints.values())[j].body.name,
                     self.gias_osimmodel)
 
-    def updateFootMuscles(self):
+    def update_foot_muscles(self):
 
-        muscleNames = ['ext_dig_l', 'ext_hal_l', 'flex_dig_l', 'flex_hal_l', 'per_brev_l',
-                       'per_long_l', 'per_tert_l', 'tib_ant_l', 'tib_post_l',
-                       'ext_dig_r', 'ext_hal_r', 'flex_dig_r', 'flex_hal_r', 'per_brev_r',
-                       'per_long_r', 'per_tert_r', 'tib_ant_r', 'tib_post_r']
+        muscleNames = ['ext_dig_l', 'ext_hal_l', 'flex_dig_l', 'flex_hal_l',
+                       'per_brev_l', 'per_long_l', 'per_tert_l', 'tib_ant_l',
+                       'tib_post_l', 'ext_dig_r', 'ext_hal_r', 'flex_dig_r',
+                       'flex_hal_r', 'per_brev_r', 'per_long_r', 'per_tert_r',
+                       'tib_ant_r', 'tib_post_r']
 
         # load in the original model
         mO = osim.Model(TEMPLATE_OSIM_PATH)
-        stateO = mO._model.initSystem()
+        mO.init_system()
 
         for i in range(len(muscleNames)):
 
@@ -853,17 +901,20 @@ class Gait2392MuscleCustomiser(object):
 
             side = muscle.name[-1]
 
-            # find the transformation between the two bodies the muscles are attached to
-            transO = mO.joints['ankle_' + side].locationInParent + mO.joints['subtalar_' + side].locationInParent
-            trans = self.gias_osimmodel.joints['ankle_' + side].locationInParent + self.gias_osimmodel.joints[
+            # find the transformation between the two bodies the muscles are
+            # attached to
+            transO = mO.joints['ankle_' + side].locationInParent + mO.joints[
+                'subtalar_' + side].locationInParent
+            trans = self.gias_osimmodel.joints['ankle_' + side]\
+                        .locationInParent + self.gias_osimmodel.joints[
                 'subtalar_' + side].locationInParent
 
             pathPointsO = copy.copy(muscleO.path_points)
             pathPoints = copy.copy(muscle.path_points)
 
-            ######################################################
-            #################Transform Points#####################
-            ######################################################
+            # ################################################## #
+            # ###############Transform Points################### #
+            # ################################################## #
 
             # find the path point names for the origin and the insertion
             sortedKeys = sorted(muscle.path_points.keys())
@@ -871,6 +922,7 @@ class Gait2392MuscleCustomiser(object):
             # the origin will be the first sorted key
             orig = sortedKeys[0]
 
+            ins = None
             # find the first point on the calcn
             for j in sortedKeys:
                 if pathPoints[j].body.name == 'calcn_' + side:
@@ -881,7 +933,7 @@ class Gait2392MuscleCustomiser(object):
 
             for j in range(endPP + 1):
 
-                if (pathPointsO[sortedKeys[j]].body.name == 'calcn_' + side):
+                if pathPointsO[sortedKeys[j]].body.name == 'calcn_' + side:
                     pathPointsO[sortedKeys[j]].location += transO
                     pathPoints[sortedKeys[j]].location += trans
 
@@ -889,8 +941,8 @@ class Gait2392MuscleCustomiser(object):
             v1 = pathPoints[orig].location - pathPointsO[orig].location
             v2 = pathPoints[ins].location - pathPointsO[ins].location
 
-            # the new points are going to be found by translating the points based on a
-            # weighting mulitplied by these two vectors
+            # the new points are going to be found by translating the points
+            # based on a weighting mulitplied by these two vectors
 
             # the weighting will be how far along the muscle the point it
 
@@ -898,14 +950,15 @@ class Gait2392MuscleCustomiser(object):
             segments = np.zeros([endPP, 3])
             lengths = np.zeros(endPP)
             for j in range(endPP):
-                segments[j] = pathPointsO[muscle.name + '-P' + str(j + 2)].location - pathPointsO[
+                segments[j] = pathPointsO[muscle.name + '-P' + str(
+                    j + 2)].location - pathPointsO[
                     muscle.name + '-P' + str(j + 1)].location
                 lengths[j] = np.linalg.norm(segments[j])
 
             Tl = np.sum(lengths)
 
-            # Define the weighting function
-            # for the points calculate the magnitude of the new vector and at what angle
+            # Define the weighting function for the points calculate the
+            # magnitude of the new vector and at what angle
 
             for j in range(endPP - 1):
                 # the second pathpoint will be the first via point
@@ -918,18 +971,21 @@ class Gait2392MuscleCustomiser(object):
                 pNew = ((dl / Tl) * v2) + ((1 - dl / Tl) * v1) + p
 
                 # update the opensim model
-                muscle.path_points[muscle.name + '-P' + str(j + 2)].location = pNew
+                muscle.path_points[muscle.name + '-P' + str(
+                    j + 2)].location = pNew
 
             for j in range(endPP + 1):
-                if (pathPoints[sortedKeys[j]].body.name == 'calcn_' + side):
+                if pathPoints[sortedKeys[j]].body.name == 'calcn_' + side:
                     pathPoints[sortedKeys[j]].location -= trans
 
-    def updateWrapPoints(self):
+    def update_wrap_points(self):
 
         muscleNames = ['psoas_l', 'iliacus_l', 'psoas_r', 'iliacus_r']
-        wrapNames = ['PS_at_brim_l', 'IL_at_brim_l', 'PS_at_brim_r', 'IL_at_brim_r']
+        wrapNames = ['PS_at_brim_l', 'IL_at_brim_l', 'PS_at_brim_r',
+                     'IL_at_brim_r']
         joint = 'hip'
-        wrapPoints = {'psoas_l': 26, 'psoas_r': 26, 'iliacus_l': 4926, 'iliacus_r': 26}
+        wrapPoints = {'psoas_l': 26, 'psoas_r': 26, 'iliacus_l': 4926,
+                      'iliacus_r': 26}
 
         for i in range(len(muscleNames)):
 
@@ -937,7 +993,8 @@ class Gait2392MuscleCustomiser(object):
 
             radiiString = wrap.getDimensions()
 
-            # increase the radii by a small amount so the via point don't sit directly on the wrap object
+            # increase the radii by a small amount so the via point don't sit
+            # directly on the wrap object
             radii = np.array(str.split(radiiString))[1:].astype(float) + 0.002
 
             theta = np.linspace(0, 2 * pi, 100)
@@ -948,16 +1005,18 @@ class Gait2392MuscleCustomiser(object):
 
             for j in range(len(theta)):
                 for k in range(len(phi)):
-                    x = wrapCentre[0] + radii[0] * np.cos(theta[j]) * np.sin(phi[k])
-                    y = wrapCentre[1] + radii[1] * np.sin(theta[j]) * np.sin(phi[k])
+                    x = wrapCentre[0] + radii[0] * np.cos(theta[j]) * np.sin(
+                        phi[k])
+                    y = wrapCentre[1] + radii[1] * np.sin(theta[j]) * np.sin(
+                        phi[k])
                     z = wrapCentre[2] + radii[2] * np.cos(phi[k])
 
-                    if (i == 0 and j == 0):
+                    if i == 0 and j == 0:
                         sphere[i, :] = [x, y, z]
                     else:
                         sphere = np.vstack([sphere, [x, y, z]])
 
-                # with the sphere created get the via point
+            # with the sphere created get the via point
             muscle = self.gias_osimmodel.muscles[muscleNames[i]]
 
             viaPoint = muscle.path_points[muscle.name + '-P2']
@@ -975,12 +1034,12 @@ class Gait2392MuscleCustomiser(object):
 
             side = muscleNames[i][-2:]
 
-            # find the transformation between the two bodies the muscles are attached to
+            # find the transformation between the two bodies the muscles are
+            # attached to
             trans = self.gias_osimmodel.joints[joint + side].locationInParent
 
-            oldPoint = checkPoint.location + trans
-
-            # find the distance between the closest point on the sphere and the centre
+            # find the distance between the closest point on the sphere and the
+            # centre
             dists = sphere - (checkPoint.location + trans)
 
             # normalize the distances to each point
@@ -995,65 +1054,16 @@ class Gait2392MuscleCustomiser(object):
             # find the distance between the point and the centre of the sphere
             d2 = np.linalg.norm(np_wrap_centre - (checkPoint.location + trans))
 
-            # If the distance d1 is larger than d2 move the point is inside the sphere
+            # If the distance d1 is larger than d2 move the point is inside the
+            # sphere
             # and needs to be moved to the closest point on the sphere
-            if (d1 > d2):
+            if d1 > d2:
                 checkPoint.location = sphere[nodeNum] - trans
 
-    def updateMarkerSet(self):
+    def update_marker_set(self):
 
-        ##create dictionary linking landmarks to bodies
-        # fieldworkMarkers = {
-        # 'pelvis': ['RASI','LASI','RPSI','LPSI','LHJC','RHJC'],
-        # 'femur_l': ['LTH1','LTH2','LTH3','LTH4','LLFC', 'LMFC','LKJC'],
-        # 'femur_r': ['RTH1','RTH2','RTH3','RTH4','RLFC', 'RMFC','RKJC'],
-        # 'tibia_l': ['LTB1','LTB2','LTB3','LTB4','LLMAL','LMMAL','LAJC'],
-        # 'tibia_r': ['RTB1','RTB2','RTB3','RTB4','RLMAL','RMMAL','RAJC']
-        # }
-
-        # otherMarkers = {
-        # 'torso': ['C7','T10','CLAV','STRN','RBack','RACR1','LACR1'],
-        # 'calcn_l': ['LCAL'],
-        # 'toes_l' : ['LMT1','LMT5','LToe'],
-        # 'calcn_r': ['RCAL'],
-        # 'toes_r' : ['RMT1','RMT5','RToe']
-        # }
-
-        ###create dictionary linking landmarks to bodies
-        # fieldworkMarkers = {
-        # 'pelvis': ['L.ASIS','R.ASIS','V.Sacral', 'LHJC', 'RHJC'],
-        # 'femur_l': ['L.Knee.Lat','L.Knee.Med','L.Thigh.Upper','L.Thigh.Front','L.Thigh.Rear', 'LKJC'],
-        # 'femur_r': ['R.Knee.Lat','R.Knee.Med','R.Thigh.Upper','R.Thigh.Front','R.Thigh.Rear', 'RKJC'],
-        # 'tibia_l': ['L.Ankle.Lat','L.Ankle.Med','L.Shank.Upper','L.Shank.Front','L.Shank.Rear', 'LAJC'],
-        # 'tibia_r': ['R.Ankle.Lat','R.Ankle.Med','R.Shank.Upper','R.Shank.Front','R.Shank.Rear', 'RAJC']
-        # }
-
-        # otherMarkers = {
-        # 'torso': ['L.Acromium','R.Acromium'],
-        # 'calcn_l': ['L.Heel'],
-        # 'toes_l' : ['L.Toe.Tip'],
-        # 'calcn_r': ['R.Heel'],
-        # 'toes_r' : ['R.Toe.Tip']
-        # }
-
-        ##create dictionary linking landmarks to bodies
-        # fieldworkMarkers = {
-        # 'pelvis': ['LAsis','RAsis','LPsis', 'RPsis'],
-        # 'femur_l': ['LKneeLateral','LKneeMedial','LThighSuperior','LThighInferior','LThighLateral'],
-        # 'femur_r': ['RKneeLateral','RKneeMedial','RThighSuperior','RThighInferior','RThighLateral'],
-        # 'tibia_l': ['LAnkleLateral','LAnkleMedial','LShankSuperior','LShankInferior','LShankLateral'],
-        # 'tibia_r': ['RAnkleLateral','RankleMedial','RShankSuperior','RShankInferior','RShankLateral']
-        # }
-
-        # otherMarkers = {
-        # 'torso': ['LShoulder','RShoulder'],
-        # 'calcn_l': ['LHeel', 'LMidfootLateral'],
-        # 'toes_l' : ['LToe'],
-        # 'calcn_r': ['RHeel', 'RMidfootLateral'],
-        # 'toes_r' : ['RToe']
-        # }
-
-        ##create dictionary linking landmarks to bodies based on the Cleveland Marker Set
+        # create dictionary linking landmarks to bodies based on the Cleveland
+        # Marker Set
         fieldworkMarkers = {
             'pelvis': ['RASI', 'LASI', 'RPSI', 'LPSI', 'SACR', 'LHJC', 'RHJC'],
             'femur_l': ['LT1', 'LT2', 'LT3', 'LKNE', 'LKNM', 'LKJC'],
@@ -1063,32 +1073,15 @@ class Gait2392MuscleCustomiser(object):
         }
 
         otherMarkers = {
-            'torso': ['C7', 'T10', 'CLAV', 'STRN', 'BackExtra', 'LSHO', 'LTRI', 'LELB',
-                      'LWRI', 'RSHO', 'RTRI', 'RELB', 'RWRI'],
+            'torso': ['C7', 'T10', 'CLAV', 'STRN', 'BackExtra', 'LSHO', 'LTRI',
+                      'LELB', 'LWRI', 'RSHO', 'RTRI', 'RELB', 'RWRI'],
             'calcn_l': ['LHEE'],
             'toes_l': ['LTOE'],
             'calcn_r': ['RHEE'],
             'toes_r': ['RTOE']
         }
 
-        # create dictionary linking landmarks to bodies
-        # fieldworkMarkers = {
-        # 'pelvis': ['LASI','RASI','VSAC','RILC','RPSI','LPSI','LILC'],
-        # 'femur_l': ['LGTR','LTTL','LTTM','LTBL','LTBM','LKNL','LKNM'],
-        # 'femur_r': ['RGTR','RTTL','RTTM','RTBL','RTBM','RKNL','RKNM'],
-        # 'tibia_l': ['LSTL','LSTM','LSBM','LSBL','LMAL','LMAN'],
-        # 'tibia_r': ['RSTL','RSTM','RSBM','RSBL','RMAL','RMAM']
-        # }
-
-        # otherMarkers = {
-        # 'torso': ['LACR','T7','MST','LWRI','RACR','RTRI','RELB','RWRI'],
-        # 'calcn_l': ['LHEP','LHED'],
-        # 'toes_l' : ['LTOE','LMH5','LMH1'],
-        # 'calcn_r': ['RHEP','RHED'],
-        # 'toes_r' : ['RTOE','RMH5','RMH1']
-        # }
-
-        state = self.gias_osimmodel._model.initSystem()
+        self.gias_osimmodel.init_system()
 
         # load in the geometric fields and update their coordinate systems to
         # align with opensim.
@@ -1125,16 +1118,18 @@ class Gait2392MuscleCustomiser(object):
                     if fieldworkMarkers[j][k] == i:
                         body = self.gias_osimmodel.bodies[j]
 
-                        newMarker = osim.Marker(bodyname=j, offset=eval(j).acs.map_local(
-                            np.array([data[fieldworkMarkers[j][k]]])).flatten() / 1000)
+                        newMarker = osim.Marker(bodyname=j, offset=eval(
+                            j).acs.map_local(np.array([data[fieldworkMarkers[
+                                j][k]]])).flatten() / 1000)
                         newMarker.name = i
-                        markerSet.adoptAndAppend(newMarker._osimMarker)
+                        markerSet.adoptAndAppend(newMarker.get_osim_marker())
                         break
 
                     if body is not None:
                         break
 
-                    # if the body has no fieldwork model check if it can be found in the extra dictionary
+                    # if the body has no fieldwork model check if it can be
+                    # found in the extra dictionary
             if body is None:
 
                 # import pdb
@@ -1146,59 +1141,85 @@ class Gait2392MuscleCustomiser(object):
                             body = j
 
                             if body == 'torso':
-                                pointOnParent = pelvis.acs.map_local(np.array([data[i]])).flatten() / 1000
+                                pointOnParent = pelvis.acs.map_local(
+                                    np.array([data[i]])).flatten() / 1000
                                 # find the difference in body coordinates
-                                diff = self.gias_osimmodel.joints['back'].locationInParent
+                                diff = self.gias_osimmodel.joints[
+                                    'back'].locationInParent
                                 markerPos = pointOnParent - diff
-                                newMarker = osim.Marker(bodyname=body, offset=markerPos)
+                                newMarker = osim.Marker(
+                                    bodyname=body, offset=markerPos)
                                 newMarker.name = i
-                                markerSet.adoptAndAppend(newMarker._osimMarker)
+                                markerSet.adoptAndAppend(
+                                    newMarker.get_osim_marker())
 
                             elif body == 'calcn_l':
-                                pointOnParent = tibia_l.acs.map_local(np.array([data[i]])).flatten() / 1000
+                                pointOnParent = tibia_l.acs.map_local(
+                                    np.array([data[i]])).flatten() / 1000
 
                                 # find the difference in body coordinates
-                                diff = self.gias_osimmodel.joints['ankle_l'].locationInParent + \
-                                       self.gias_osimmodel.joints['subtalar_l'].locationInParent
+                                diff = self.gias_osimmodel.joints[
+                                           'ankle_l'].locationInParent + \
+                                    self.gias_osimmodel.joints[
+                                        'subtalar_l'].locationInParent
                                 markerPos = pointOnParent - diff
-                                newMarker = osim.Marker(bodyname=body, offset=markerPos)
+                                newMarker = osim.Marker(
+                                    bodyname=body, offset=markerPos)
                                 newMarker.name = i
-                                markerSet.adoptAndAppend(newMarker._osimMarker)
+                                markerSet.adoptAndAppend(
+                                    newMarker.get_osim_marker())
 
                             elif body == 'calcn_r':
-                                pointOnParent = tibia_r.acs.map_local(np.array([data[i]])).flatten() / 1000
+                                pointOnParent = tibia_r.acs.map_local(
+                                    np.array([data[i]])).flatten() / 1000
 
                                 # find the difference in body coordinates
-                                diff = self.gias_osimmodel.joints['ankle_r'].locationInParent + \
-                                       self.gias_osimmodel.joints['subtalar_r'].locationInParent
+                                diff = self.gias_osimmodel.joints[
+                                           'ankle_r'].locationInParent + \
+                                    self.gias_osimmodel.joints[
+                                        'subtalar_r'].locationInParent
                                 markerPos = pointOnParent - diff
-                                newMarker = osim.Marker(bodyname=body, offset=markerPos)
+                                newMarker = osim.Marker(
+                                    bodyname=body, offset=markerPos)
                                 newMarker.name = i
-                                markerSet.adoptAndAppend(newMarker._osimMarker)
+                                markerSet.adoptAndAppend(
+                                    newMarker.get_osim_marker())
 
                             elif body == 'toes_l':
-                                pointOnParent = tibia_l.acs.map_local(np.array([data[i]])).flatten() / 1000
+                                pointOnParent = tibia_l.acs.map_local(
+                                    np.array([data[i]])).flatten() / 1000
 
                                 # find the difference in body coordinates
-                                diff = self.gias_osimmodel.joints['ankle_r'].locationInParent + \
-                                       self.gias_osimmodel.joints['subtalar_r'].locationInParent + \
-                                       self.gias_osimmodel.joints['mtp_l'].locationInParent
+                                diff = self.gias_osimmodel.joints[
+                                           'ankle_r'].locationInParent + \
+                                    self.gias_osimmodel.joints[
+                                           'subtalar_r'].locationInParent + \
+                                    self.gias_osimmodel.joints[
+                                           'mtp_l'].locationInParent
                                 markerPos = pointOnParent - diff
-                                newMarker = osim.Marker(bodyname=body, offset=markerPos)
+                                newMarker = osim.Marker(
+                                    bodyname=body, offset=markerPos)
                                 newMarker.name = i
-                                markerSet.adoptAndAppend(newMarker._osimMarker)
+                                markerSet.adoptAndAppend(
+                                    newMarker.get_osim_marker())
 
                             elif body == 'toes_r':
-                                pointOnParent = tibia_r.acs.map_local(np.array([data[i]])).flatten() / 1000
+                                pointOnParent = tibia_r.acs.map_local(
+                                    np.array([data[i]])).flatten() / 1000
 
                                 # find the difference in body coordinates
-                                diff = self.gias_osimmodel.joints['ankle_r'].locationInParent + \
-                                       self.gias_osimmodel.joints['subtalar_r'].locationInParent + \
-                                       self.gias_osimmodel.joints['mtp_r'].locationInParent
+                                diff = self.gias_osimmodel.joints[
+                                           'ankle_r'].locationInParent + \
+                                    self.gias_osimmodel.joints[
+                                           'subtalar_r'].locationInParent + \
+                                    self.gias_osimmodel.joints[
+                                           'mtp_r'].locationInParent
                                 markerPos = pointOnParent - diff
-                                newMarker = osim.Marker(bodyname=body, offset=markerPos)
+                                newMarker = osim.Marker(
+                                    bodyname=body, offset=markerPos)
                                 newMarker.name = i
-                                markerSet.adoptAndAppend(newMarker._osimMarker)
+                                markerSet.adoptAndAppend(
+                                    newMarker.get_osim_marker())
 
             if body is None:
                 print('{} can not be identified as a valid landmark'.
