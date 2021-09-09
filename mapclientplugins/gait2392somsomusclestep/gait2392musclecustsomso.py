@@ -218,6 +218,7 @@ class Gait2392MuscleCustomiser(object):
         self.ll = ll
         self.trcdata = landmarks
         self.gias_osimmodel = None
+        self._workflow_location = None
         if osimmodel is not None:
             self.set_osim_model(osimmodel)
         self._unit_scaling = dim_unit_scaling(
@@ -548,9 +549,13 @@ class Gait2392MuscleCustomiser(object):
             ppR = pathPointsRight[sR[aSite]]
             ppR.location = rightPatellaAttachments[i]
 
+    def set_workflow_location(self, location):
+        self._workflow_location = location
+
     def write_cust_osim_model(self):
         self.gias_osimmodel.save(
-            os.path.join(str(self.config['osim_output_dir']), OSIM_FILENAME)
+            os.path.join(self._workflow_location,
+                         self.config['osim_output_dir'], OSIM_FILENAME)
         )
 
     def customise(self):

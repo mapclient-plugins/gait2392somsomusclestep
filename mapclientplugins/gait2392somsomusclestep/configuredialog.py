@@ -10,17 +10,21 @@ DEFAULT_STYLE_SHEET = ''
 
 class ConfigureDialog(QtWidgets.QDialog):
     """
-    Configure dialog to present the user with the options to configure this step.
+    Configure dialog to present the user with the options to configure this
+    step.
     """
 
     def __init__(self, parent=None):
-        '''
+        """
         Constructor
-        '''
+        """
         QtWidgets.QDialog.__init__(self, parent)
 
         self._ui = Ui_ConfigureDialog()
         self._ui.setupUi(self)
+
+        self._workflow_location = None
+        self._previousOsimOutputDir = None
 
         # Keep track of the previous identifier so that we can track changes
         # and know how many occurrences of the current identifier there should
@@ -42,8 +46,13 @@ class ConfigureDialog(QtWidgets.QDialog):
         self._ui.lineEdit_identifier.textChanged.connect(self.validate)
         self._ui.lineEdit_subject_height.textChanged.connect(self.validate)
         self._ui.lineEdit_subject_mass.textChanged.connect(self.validate)
-        self._ui.lineEdit_osim_output_dir.textChanged.connect(self._osimOutputDirEdited)
-        self._ui.pushButton_osim_output_dir.clicked.connect(self._osimOutputDirClicked)
+        self._ui.lineEdit_osim_output_dir.textChanged.connect(
+            self._osimOutputDirEdited)
+        self._ui.pushButton_osim_output_dir.clicked.connect(
+            self._osimOutputDirClicked)
+
+    def set_workflow_location(self, location):
+        self._workflow_location = location
 
     def accept(self):
         """
@@ -52,44 +61,52 @@ class ConfigureDialog(QtWidgets.QDialog):
         """
         result = QtWidgets.QMessageBox.Yes
         if not self.validate():
-            result = QtWidgets.QMessageBox.warning(self, 'Invalid Configuration',
-                'This configuration is invalid.  Unpredictable behaviour may result if you choose \'Yes\', are you sure you want to save this configuration?)',
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+            result = QtWidgets.QMessageBox.warning(
+                self, 'Invalid Configuration',
+                'This configuration is invalid. Unpredictable behaviour may '
+                'result if you choose \'Yes\', are you sure you want to save '
+                'this configuration?)',
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                QtWidgets.QMessageBox.No)
 
         if result == QtWidgets.QMessageBox.Yes:
             QtWidgets.QDialog.accept(self)
 
     def validate(self):
         """
-        Validate the configuration dialog fields.  For any field that is not valid
-        set the style sheet to the INVALID_STYLE_SHEET.  Return the outcome of the
-        overall validity of the configuration.
+        Validate the configuration dialog fields.  For any field that is not
+        valid set the style sheet to the INVALID_STYLE_SHEET.  Return the
+        outcome of the overall validity of the configuration.
         """
-        # Determine if the current identifier is unique throughout the workflow
-        # The identifierOccursCount method is part of the interface to the workflow framework.
-        idValue = self.identifierOccursCount(self._ui.lineEdit_identifier.text())
-        idValid = (idValue == 0) or (idValue == 1 and self._previousIdentifier == self._ui.lineEdit_identifier.text())
-        if idValid:
-            self._ui.lineEdit_identifier.setStyleSheet(DEFAULT_STYLE_SHEET)
-        else:
-            self._ui.lineEdit_identifier.setStyleSheet(INVALID_STYLE_SHEET)
+        # Determine if the current identifier is unique throughout the
+        # workflow.The identifierOccursCount method is part of the interface
+        # to the workflow framework.
+        id_value = self.identifierOccursCount(
+            self._ui.lineEdit_identifier.text())
+        id_valid = (id_value == 0) or (id_value == 1 and
+                                       self._previousIdentifier
+                                       == self._ui.lineEdit_identifier.text())
+
+        self._ui.lineEdit_identifier.setStyleSheet(
+            DEFAULT_STYLE_SHEET if id_valid else INVALID_STYLE_SHEET)
+
+        location_valid = os.path.exists(os.path.join(
+            self._workflow_location, self._ui.lineEdit_osim_output_dir.text()))
+
+        self._ui.lineEdit_osim_output_dir.setStyleSheet(
+            DEFAULT_STYLE_SHEET if location_valid else INVALID_STYLE_SHEET)
             
-        osimOutputDirValid = os.path.exists(self._ui.lineEdit_osim_output_dir.text())
-        if osimOutputDirValid:
-            self._ui.lineEdit_osim_output_dir.setStyleSheet(DEFAULT_STYLE_SHEET)
-        else:
-            self._ui.lineEdit_osim_output_dir.setStyleSheet(INVALID_STYLE_SHEET)
-            
-        valid = idValid and osimOutputDirValid
-        self._ui.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(valid)
+        valid = id_valid and location_valid
+        self._ui.buttonBox.button(
+            QtWidgets.QDialogButtonBox.Ok).setEnabled(valid)
 
         return valid
 
     def getConfig(self):
         """
         Get the current value of the configuration from the dialog.  Also
-        set the _previousIdentifier value so that we can check uniqueness of the
-        identifier over the whole of the workflow.
+        set the _previousIdentifier value so that we can check uniqueness of
+        the identifier over the whole of the workflow.
         """
         
         self._previousIdentifier = self._ui.lineEdit_identifier.text()
@@ -167,10 +184,12 @@ class ConfigureDialog(QtWidgets.QDialog):
 
 
     def _osimOutputDirClicked(self):
-        location = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Directory', self._previousOsimOutputDir)
+        location = QtWidgets.QFileDialog.getExistingDirectory(
+            self, 'Select Directory', self._previousOsimOutputDir)
         if location:
             self._previousOsimOutputDir = location
-            self._ui.lineEdit_osim_output_dir.setText(location)
+            self._ui.lineEdit_osim_output_dir.setText(
+                os.path.relpath(location, self._workflow_location))
 
     def _osimOutputDirEdited(self):
         self.validate()

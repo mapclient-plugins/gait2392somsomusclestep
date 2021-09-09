@@ -73,6 +73,7 @@ class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
         self._config['subject_mass'] = ''
 
         self._g2392_somso_muscle = Gait2392MuscleCustomiser(self._config)
+        self._g2392_somso_muscle.set_workflow_location(self._location)
 
     def execute(self):
         """
@@ -117,6 +118,7 @@ class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
             self._configured = True
         """
         dlg = ConfigureDialog()
+        dlg.set_workflow_location(self._location)
         dlg.identifierOccursCount = self._identifierOccursCount
         dlg.setConfig(self._config)
         dlg.validate()
@@ -156,6 +158,7 @@ class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
         self._config.update(json.loads(string))
 
         d = ConfigureDialog()
+        d.set_workflow_location(self._location)
         d.identifierOccursCount = self._identifierOccursCount
         d.setConfig(self._config)
         self._configured = d.validate()
