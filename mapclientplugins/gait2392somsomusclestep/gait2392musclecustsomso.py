@@ -570,10 +570,11 @@ class Gait2392MuscleCustomiser(object):
         self.update_knee_muscles()
         self.update_foot_muscles()
         self.update_wrap_points()
-        # The Marker Set was quite comprehensively updated in the previous
-        # plugin, is the following method really important? Or better than the
-        # other one?
-        self.update_marker_set()
+        # The gait2392 default marker set was comprehensively updated in the
+        # previous plugin. Many of the markers being added here appear to be
+        # duplicates of gait2392 markers. If we need to add any additional
+        # markers to the Model we should use this method.
+        # self.update_marker_set()
 
         if self.config['update_max_iso_forces']:
             self.update_max_iso_forces()
@@ -1064,12 +1065,17 @@ class Gait2392MuscleCustomiser(object):
 
         # create dictionary linking landmarks to bodies based on the Cleveland
         # Marker Set
+        # Many of these markers are already included in the gait2392 MarkerSet.
+        # This method should be used to add any additional LowerLimb landmarks
+        # to the OpenSim model. Make sure the target landmarks are being output
+        # by the LowerLimbGeneration step.
         fieldworkMarkers = {
-            'pelvis': ['RASI', 'LASI', 'RPSI', 'LPSI', 'SACR', 'LHJC', 'RHJC'],
-            'femur_l': ['LT1', 'LT2', 'LT3', 'LKNE', 'LKNM', 'LKJC'],
-            'femur_r': ['RT1', 'RT2', 'RT3', 'RKNE', 'RKNM', 'RKJC'],
-            'tibia_l': ['LS1', 'LS2', 'LS3', 'LANK', 'LANM', 'LAJC'],
-            'tibia_r': ['RS1', 'RS2', 'RS3', 'RANK', 'RANM', 'RAJC'],
+            # 'pelvis': ['RASI', 'LASI', 'RPSI', 'LPSI', 'SACR', 'LHJC',
+            # 'RHJC'],
+            # 'femur_l': ['LT1', 'LT2', 'LT3', 'LKNE', 'LKNM', 'LKJC'],
+            # 'femur_r': ['RT1', 'RT2', 'RT3', 'RKNE', 'RKNM', 'RKJC'],
+            # 'tibia_l': ['LS1', 'LS2', 'LS3', 'LANK', 'LANM', 'LAJC'],
+            # 'tibia_r': ['RS1', 'RS2', 'RS3', 'RANK', 'RANM', 'RAJC'],
         }
 
         otherMarkers = {
@@ -1118,18 +1124,22 @@ class Gait2392MuscleCustomiser(object):
                     if fieldworkMarkers[j][k] == i:
                         body = self.gias_osimmodel.bodies[j]
 
-                        newMarker = osim.Marker(bodyname=j, offset=eval(
-                            j).acs.map_local(np.array([data[fieldworkMarkers[
-                                j][k]]])).flatten() / 1000)
-                        newMarker.name = i
+                        full_frame_name = "/bodyset/" + j
+
+                        newMarker = osim.Marker(
+                            name=i,
+                            frame_name=full_frame_name,
+                            location=eval(j).acs.map_local(np.array([data[
+                                fieldworkMarkers[j][k]]])).flatten() / 1000
+                        )
                         markerSet.adoptAndAppend(newMarker.get_osim_marker())
                         break
 
                     if body is not None:
                         break
 
-                    # if the body has no fieldwork model check if it can be
-                    # found in the extra dictionary
+            # if the body has no fieldwork model check if it can be
+            # found in the extra dictionary
             if body is None:
 
                 # import pdb
@@ -1138,7 +1148,7 @@ class Gait2392MuscleCustomiser(object):
                 for j in otherMarkers.keys():
                     for k in range(len(otherMarkers[j])):
                         if otherMarkers[j][k] == i:
-                            body = j
+                            body = "/bodyset/" + j
 
                             if body == 'torso':
                                 pointOnParent = pelvis.acs.map_local(
@@ -1148,8 +1158,10 @@ class Gait2392MuscleCustomiser(object):
                                     'back'].locationInParent
                                 markerPos = pointOnParent - diff
                                 newMarker = osim.Marker(
-                                    bodyname=body, offset=markerPos)
-                                newMarker.name = i
+                                    name=i,
+                                    frame_name=body,
+                                    location=markerPos
+                                )
                                 markerSet.adoptAndAppend(
                                     newMarker.get_osim_marker())
 
@@ -1164,8 +1176,10 @@ class Gait2392MuscleCustomiser(object):
                                         'subtalar_l'].locationInParent
                                 markerPos = pointOnParent - diff
                                 newMarker = osim.Marker(
-                                    bodyname=body, offset=markerPos)
-                                newMarker.name = i
+                                    name=i,
+                                    frame_name=body,
+                                    location=markerPos
+                                )
                                 markerSet.adoptAndAppend(
                                     newMarker.get_osim_marker())
 
@@ -1180,8 +1194,10 @@ class Gait2392MuscleCustomiser(object):
                                         'subtalar_r'].locationInParent
                                 markerPos = pointOnParent - diff
                                 newMarker = osim.Marker(
-                                    bodyname=body, offset=markerPos)
-                                newMarker.name = i
+                                    name=i,
+                                    frame_name=body,
+                                    location=markerPos
+                                )
                                 markerSet.adoptAndAppend(
                                     newMarker.get_osim_marker())
 
@@ -1198,8 +1214,10 @@ class Gait2392MuscleCustomiser(object):
                                            'mtp_l'].locationInParent
                                 markerPos = pointOnParent - diff
                                 newMarker = osim.Marker(
-                                    bodyname=body, offset=markerPos)
-                                newMarker.name = i
+                                    name=i,
+                                    frame_name=body,
+                                    location=markerPos
+                                )
                                 markerSet.adoptAndAppend(
                                     newMarker.get_osim_marker())
 
@@ -1216,8 +1234,10 @@ class Gait2392MuscleCustomiser(object):
                                            'mtp_r'].locationInParent
                                 markerPos = pointOnParent - diff
                                 newMarker = osim.Marker(
-                                    bodyname=body, offset=markerPos)
-                                newMarker.name = i
+                                    name=i,
+                                    frame_name=body,
+                                    location=markerPos
+                                )
                                 markerSet.adoptAndAppend(
                                     newMarker.get_osim_marker())
 
@@ -1226,4 +1246,4 @@ class Gait2392MuscleCustomiser(object):
                       format(i))
 
         # update the marker set of the model
-        self.gias_osimmodel.set_marker_set(markerSet)
+        self.gias_osimmodel.update_marker_set(markerSet)

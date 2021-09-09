@@ -52,8 +52,8 @@ class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
         self.addPort(
             ('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
              'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
-             # 'http://physiomeproject.org/workflow/1.0/rdf-schema#landmarks'))
-             'ju#fieldworkmodeldict'))
+             'http://physiomeproject.org/workflow/1.0/rdf-schema#landmarks'))
+             # 'ju#fieldworkmodeldict'))
         self.addPort(
             ('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
              'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
