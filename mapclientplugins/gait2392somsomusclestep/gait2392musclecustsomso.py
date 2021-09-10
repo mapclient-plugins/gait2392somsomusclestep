@@ -2,6 +2,7 @@
 Module for customising opensim segmented muscle points 
 """
 import os
+import shutil
 import numpy as np
 import copy
 from gias2.musculoskeletal.bonemodels import bonemodels
@@ -590,6 +591,17 @@ class Gait2392MuscleCustomiser(object):
 
         if self.config['write_osim_file']:
             self.write_cust_osim_model()
+
+        self.move_mesh_files()
+
+    def move_mesh_files(self):
+        source_dir = os.path.join(self._workflow_location,
+                                  self.config['osim_output_dir'],
+                                  '../Geometry')
+        target_dir = os.path.join(self._workflow_location,
+                                  self.config['osim_output_dir'],
+                                  '/Geometry')
+        shutil.move(source_dir, target_dir)
 
     # This method assumes the current max iso force is in mm and multiplies it
     # to get the value in cm. I'm not sure it should be doing this (or not like
