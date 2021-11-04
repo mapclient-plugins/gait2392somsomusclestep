@@ -595,12 +595,13 @@ class Gait2392MuscleCustomiser(object):
         self.move_mesh_files()
 
     def move_mesh_files(self):
-        source_dir = os.path.join(self._workflow_location,
-                                  self.config['osim_output_dir'],
-                                  '../Geometry')
-        target_dir = os.path.join(self._workflow_location,
-                                  self.config['osim_output_dir'],
-                                  '/Geometry')
+        output_directory = os.path.join(self._workflow_location, self.config['osim_output_dir'])
+        source_dir = os.path.join(self._workflow_location, '../output/Geometry')
+        target_dir = os.path.join(output_directory, './Geometry')
+
+        if os.path.exists(target_dir):
+            shutil.rmtree(target_dir)
+
         shutil.move(source_dir, target_dir)
 
     # This method assumes the current max iso force is in mm and multiplies it
