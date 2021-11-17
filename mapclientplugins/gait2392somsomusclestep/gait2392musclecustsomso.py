@@ -2,15 +2,16 @@
 Module for customising opensim segmented muscle points 
 """
 import os
-import shutil
-import numpy as np
-import copy
-from gias2.musculoskeletal.bonemodels import bonemodels
-from gias2.musculoskeletal import osim
-from mapclientplugins.gait2392somsomusclestep.muscleVolumeCalculator import muscleVolumeCalculator
 import re
 import math
 import json
+import shutil
+import numpy as np
+import copy
+
+from gias3.musculoskeletal.bonemodels import bonemodels
+from gias3.musculoskeletal import osim
+from mapclientplugins.gait2392somsomusclestep.muscleVolumeCalculator import muscleVolumeCalculator
 from numpy import pi
 from scipy.interpolate import interp1d
 

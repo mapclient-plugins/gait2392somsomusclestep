@@ -17,9 +17,29 @@ This file is part of MAP Client. (http://launchpad.net/mapclient)
     You should have received a copy of the GNU General Public License
     along with MAP Client.  If not, see <http://www.gnu.org/licenses/>..
 """
+import codecs
+import io
+import os
+import re
 
 from setuptools import setup, find_packages
-import io
+
+
+SETUP_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def read(*parts):
+    with codecs.open(os.path.join(SETUP_DIR, *parts), 'r') as fp:
+        return fp.read()
+
+
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
 
 
 def readfile(filename, split=False):
@@ -32,25 +52,26 @@ def readfile(filename, split=False):
 package_readme = readfile("README.rst")[3:]  # skip title
 package_license = readfile("LICENSE")
 package_dependencies = [
-    "setuptools",
     "PySide2",
     "numpy",
-    "gias2",
+    "gias3.musculoskeletal",
     "scipy"
 ]
 
-setup(name=u'mapclientplugins.gait2392somsomusclestep',
-      version='0.1',
-      description='',
-      long_description='\n'.join(package_readme) + package_license,
-      classifiers=[],
-      author=u'Ju Zhang',
-      author_email='',
-      url='',
-      license='APACHE',
-      packages=find_packages(exclude=['ez_setup', ]),
-      namespace_packages=['mapclientplugins'],
-      include_package_data=True,
-      zip_safe=False,
-      install_requires=package_dependencies,
-      )
+setup(
+    name=u'mapclientplugins.gait2392somsomusclestep',
+    version=find_version('mapclientplugins', 'gait2392somsomusclestep', '__init__.py'),
+    description='',
+    long_description='\n'.join(package_readme) + package_license,
+    long_description_content_type='text/x-rst',
+    classifiers=[],
+    author=u'Ju Zhang',
+    author_email='',
+    url='',
+    license='APACHE',
+    packages=find_packages(exclude=['ez_setup', ]),
+    namespace_packages=['mapclientplugins'],
+    include_package_data=True,
+    zip_safe=False,
+    install_requires=package_dependencies,
+)
