@@ -17,8 +17,7 @@ from scipy.interpolate import interp1d
 
 SELF_DIR = os.path.split(__file__)[0]
 DATA_DIR = os.path.join(SELF_DIR, 'data/node_numbers/')
-TEMPLATE_OSIM_PATH = os.path.join(SELF_DIR, 'data',
-                                  'gait2392_simbody_wrap.osim')
+TEMPLATE_OSIM_PATH = os.path.join(SELF_DIR, 'data', 'gait2392_simbody_wrap.osim')
 
 VALID_SEGS = {'pelvis', 'femur-l', 'femur-r', 'tibia-l', 'tibia-r'}
 OSIM_FILENAME = 'gait2392_simbody.osim'

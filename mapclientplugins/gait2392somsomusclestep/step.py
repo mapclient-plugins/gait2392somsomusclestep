@@ -53,24 +53,18 @@ class FieldworkGait2392SomsoMuscleStep(WorkflowStepMountPoint):
             ('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
              'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
              'http://physiomeproject.org/workflow/1.0/rdf-schema#landmarks'))
-             # 'ju#fieldworkmodeldict'))
+        # 'ju#fieldworkmodeldict'))
         self.addPort(
             ('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
              'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
              'http://physiomeproject.org/workflow/1.0/rdf-schema#osimmodel'))
 
         # Config:
-        self._config = {}
-        self._config['identifier'] = ''
-        self._config['osim_output_dir'] = './'
-        self._config['in_unit'] = 'mm'
-        self._config['out_unit'] = 'm'
-        self._config['write_osim_file'] = True
-        self._config['update_knee_splines'] = False
-        self._config['static_vas'] = False
-        self._config['update_max_iso_forces'] = True
-        self._config['subject_height'] = ''
-        self._config['subject_mass'] = ''
+        self._config = {
+            'identifier': '', 'osim_output_dir': './', 'in_unit': 'mm',
+            'out_unit': 'm', 'write_osim_file': True, 'update_knee_splines': False, 'static_vas': False,
+            'update_max_iso_forces': True, 'subject_height': '', 'subject_mass': ''
+        }
 
         self._g2392_somso_muscle = Gait2392MuscleCustomiser(self._config)
         self._g2392_somso_muscle.set_workflow_location(self._location)
