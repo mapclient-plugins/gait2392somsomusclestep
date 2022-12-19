@@ -1,5 +1,5 @@
 import os
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 from mapclientplugins.gait2392somsomusclestep.ui_configuredialog import Ui_ConfigureDialog
 from mapclientplugins.gait2392somsomusclestep.gait2392musclecustsomso import VALID_UNITS
 

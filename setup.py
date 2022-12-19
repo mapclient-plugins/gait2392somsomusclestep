@@ -52,7 +52,7 @@ def readfile(filename, split=False):
 package_readme = readfile("README.rst")[3:]  # skip title
 package_license = readfile("LICENSE")
 package_dependencies = [
-    "PySide2",
+    "PySide6",
     "numpy",
     "gias3.musculoskeletal",
     "scipy"
